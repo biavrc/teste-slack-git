@@ -1,0 +1,38 @@
+name: Deploy teste
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Avisar início
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"🚀 *${{ github.actor }}* iniciou deploy na main\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver execução>"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - uses: actions/checkout@v4
+
+      - name: Deploy simulado
+        run: |
+          node index.js
+          sleep 10
+          # descomente a linha abaixo pra testar a mensagem de falha:
+          # exit 1
+
+      - name: Avisar sucesso
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"✅ Deploy concluído na main (por *${{ github.actor }}*)"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Avisar falha
+        if: failure()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"❌ Deploy falhou na main (por *${{ github.actor }}*)\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver logs>"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
