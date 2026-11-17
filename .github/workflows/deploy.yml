@@ -36,3 +36,9 @@ jobs:
           curl -X POST -H 'Content-type: application/json' \
             --data '{"text":"❌ Deploy falhou na main (por *${{ github.actor }}*)\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver logs>"}' \
             ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Avisar cancelamento
+        if: cancelled()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"🚫 Deploy cancelado na main (por *${{ github.actor }}*)\n<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Ver execução>"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
