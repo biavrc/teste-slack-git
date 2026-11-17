@@ -1,0 +1,13 @@
+name: Teste Slack
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Teste
+        run: echo "Testando integração com Slack"
